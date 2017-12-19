@@ -30,20 +30,17 @@ class NeuralNetwork:
 	
 
 	#as input takes list of images and path to output file(y-results)
-	def train(self,listOfPics,trueOutput,normalizeInput=0):
-		self.num=len(listOfPics)
+	def train(self,X,Y,normalizeInput=0,batch=64):
+		self.num=len(X)
 		if(normalizeInput):
-			meanImage,sumImage = getMeanImage(listOfPics)
+			meanImage,sumImage = getMeanImage(X)
 			self.meanImage=meanImage
 			self.sumImage=sumImage
-		text_file = open(trueOutput, "r")
-		self.lines = text_file.readlines()	#need to strip \n with .rstrip()
-		for x_name,y in zip(listOfPics,self.lines):
-			y=y.rstrip()
-			x=imread(x_name)
+		for x,y in zip(X,Y):
 			if(normalizeInput):
 				x-=meanImage
-			self.model.fit(x, y, epochs=100, batch_size=1,  verbose=1)  #nije mi jasno da li je ovo online ucenje
+			#Kako se salju ulazi? kao lista ili na vertikalni numpy??
+			self.model.fit(x, y, epochs=100, batch_size=batch,  verbose=1)  #nije mi jasno da li je ovo online ucenje
 		return
 
 	def classify(self,image):
@@ -53,11 +50,11 @@ class NeuralNetwork:
 """
 Function as an input gets a list of names(paths), loads them, calculates mean image in a folder and return mean and sum image
 """
-def getMeanImage(listOfDirs):
-	num=len(listOfDirs)
-	sumImage = np.zeros(imread(listOfDirs[0]).shape)
-	for i,name in enumerate(listOfDirs):
-		sumImage = np.add(sumImage,imread(name))
+def getMeanImage(X):
+	num=len(X)
+	sumImage = np.zeros(X[0].shape)
+	for i,pic in enumerate(X):
+		sumImage = np.add(sumImage,pic)
 		if i%500==0:
 			print(i)
 	#print (sumImage)
@@ -88,10 +85,12 @@ def getFiles(root):
 
 if __name__ == "__main__":
 	#root = "D:\FER\Neural nets\\101_ObjectCategories\\accordion"
-	root = os.getcwd()+"/output"
-	rootOutput = os.getcwd()+"/output/ssims.txt"
-	listOfDirs = getFiles(root)
-	listOfPics = listOfDirs[0]
+	#root = os.getcwd()+"/output"
+	#rootOutput = os.getcwd()+"/output/ssims.txt"
+	#listOfDirs = getFiles(root)
+	#listOfPics = listOfDirs[0]
+	X = np.load("X_data.npy")
+	Y = np.load("Y_data.npy")
 	#meanImage,sumImage = getMeanImage(listOfPics)
 	"""	
 	num=len(listOfDirs)
@@ -104,5 +103,5 @@ if __name__ == "__main__":
 	meanImage=sumImage/num
 	print (meanImage)
 	"""
-	X_train5, X_test5, y_train5, y_test5 = train_test_split(X, y, test_size=0.33, random_state=42)
+	#X_train5, X_test5, y_train5, y_test5 = train_test_split(X, Y, test_size=0.33, random_state=42)
 
