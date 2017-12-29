@@ -92,6 +92,7 @@ if __name__ == "__main__":
     #listOfPics = listOfDirs[0]
     X = np.load("X_data.npy")
     Y = np.load("Y_data.npy")
+
     #meanImage,sumImage = getMeanImage(listOfPics)
     """
     num=len(listOfDirs)
@@ -122,7 +123,17 @@ if __name__ == "__main__":
     network.train(X_train5, y_train5)
     print("Done training")
 
-    #predicted = network.classify(X_test5)
+    predicted = network.classify(X_test5)
 
-    #print(predicted)
+    print("Predicted Values:")
+    print(predicted)
 
+    predicted = np.asarray(predicted)
+    predicted = np.reshape(predicted, (y_test5.shape[0], 1))
+
+    y_test = np.asarray(y_test5)
+    y_test = np.reshape(y_test, (y_test5.shape[0], 1))
+    
+    print("Difference")
+    print(predicted - y_test)
+    
