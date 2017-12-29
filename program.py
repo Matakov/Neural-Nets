@@ -1,7 +1,7 @@
 """
 Created on Thu Dec 15 20:32:51 2017
 
-@author: Franjo, Dario
+@author: Franjo, Dario, Matej
 """
 #https://www.datacamp.com/community/blog/keras-cheat-sheet
 #https://machinelearningmastery.com/tutorial-first-neural-network-python-keras/
@@ -19,28 +19,29 @@ from keras.optimizers import Adam
 from keras.models import Sequential
 from keras.layers import Dense, Flatten
 from keras.layers import Conv2D, MaxPooling2D
-from deep_nn_v2 import VGG16
+from deep_nn import VGG16
 from sklearn.model_selection import train_test_split
 
 
 class NeuralNetwork:
     def __init__(self):
-        self.model=VGG16(include_top=False)
+        #self.model=VGG16(include_top=True, weights=None)
+        self.model=VGG16()
         return
 
 
     #as input takes list of images and path to output file(y-results)
     def train(self,X,Y,normalizeInput=0,batch=64):
         self.num=len(X)
-        if(normalizeInput):
-            meanImage,sumImage = getMeanImage(X)
-            self.meanImage=meanImage
-            self.sumImage=sumImage
-        for x,y in zip(X,Y):
-            if(normalizeInput):
-                x-=meanImage
+        #if(normalizeInput):
+        #    meanImage,sumImage = getMeanImage(X)
+        #    self.meanImage=meanImage
+        #    self.sumImage=sumImage
+        #for x,y in zip(X,Y):
+         #   if(normalizeInput):
+          #      x-=meanImage
             #Kako se salju ulazi? kao lista ili na vertikalni numpy??
-            self.model.fit(x, y, epochs=100, batch_size=batch,  verbose=1)  #nije mi jasno da li je ovo online ucenje
+        self.model.fit(X, Y, epochs=10, batch_size=batch,  verbose=1)  #nije mi jasno da li je ovo online ucenje
         return
 
     def classify(self,image):
@@ -117,7 +118,9 @@ if __name__ == "__main__":
 
     network = NeuralNetwork()
 
+    print("Training")
     network.train(X_train5, y_train5)
+    print("Done training")
 
     #predicted = network.classify(X_test5)
 
