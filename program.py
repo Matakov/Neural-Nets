@@ -21,32 +21,38 @@ from keras.layers import Dense, Flatten
 from keras.layers import Conv2D, MaxPooling2D
 from deep_nn import VGG16
 from sklearn.model_selection import train_test_split
+from keras.models import load_model
 
 
 class NeuralNetwork:
-    def __init__(self):
-        #self.model=VGG16(include_top=True, weights=None)
-        self.model=VGG16()
-        return
+	def __init__(self):
+		#self.model=VGG16(include_top=True, weights=None)
+		self.model=VGG16()
+		return
 
 
-    #as input takes list of images and path to output file(y-results)
-    def train(self,X,Y,normalizeInput=0,batch=64):
-        self.num=len(X)
-        #if(normalizeInput):
-        #    meanImage,sumImage = getMeanImage(X)
-        #    self.meanImage=meanImage
-        #    self.sumImage=sumImage
-        #for x,y in zip(X,Y):
-         #   if(normalizeInput):
-          #      x-=meanImage
-            #Kako se salju ulazi? kao lista ili na vertikalni numpy??
-        self.model.fit(X, Y, epochs=10, batch_size=batch,  verbose=1)  #nije mi jasno da li je ovo online ucenje
-        return
+	#as input takes list of images and path to output file(y-results)
+	def train(self,X,Y,epochs=10,batch=64,normalizeInput=0):
+		print(epochs)
+		self.num=len(X)
+		#if(normalizeInput):
+	        #    meanImage,sumImage = getMeanImage(X)
+	        #    self.meanImage=meanImage
+	        #    self.sumImage=sumImage
+	        #for x,y in zip(X,Y):
+	        #   if(normalizeInput):
+	        #      x-=meanImage
+		self.model.fit(X, Y, epochs=epochs, batch_size=batch,  verbose=1)
+		return
 
-    def classify(self,image):
-        return self.model.predict(image)
+	def classify(self,image):
+		return self.model.predict(image)
 
+	def save(self,filename):
+		self.model.save(filename)
+
+	def load(self,filename):
+		self.model = load_model(filename)
 
 """
 Function as an input gets a list of names(paths), loads them, calculates mean image in a folder and return mean and sum image
@@ -105,8 +111,8 @@ if __name__ == "__main__":
     meanImage=sumImage/num
     print (meanImage)
     """
-    X_small = X[:1000]
-    y_small = Y[:1000]
+    X_small = X[:30000]
+    y_small = Y[:30000]
 
     print("Before:")
     print(X_small.shape)
@@ -120,10 +126,11 @@ if __name__ == "__main__":
     network = NeuralNetwork()
 
     print("Training")
-    network.train(X_train5, y_train5)
+    network.train(X_train5, y_train5,300)
     print("Done training")
 
     predicted = network.classify(X_test5)
+    
 
     print("Predicted Values:")
     print(predicted)
@@ -137,3 +144,6 @@ if __name__ == "__main__":
     print("Difference")
     print(predicted - y_test)
     
+
+    #SAVE MODEL
+    network.save('my_model.h5')
