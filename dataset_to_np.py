@@ -3,7 +3,7 @@ import os
 import cv2
 
 imgs = []
-for i, file in enumerate(os.listdir()):
+for i, file in enumerate(sorted(os.listdir())):
     if i%100 == 0:
         print (i)
     if file == "ssims.txt":
