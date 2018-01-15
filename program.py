@@ -19,7 +19,7 @@ from keras.optimizers import Adam
 from keras.models import Sequential
 from keras.layers import Dense, Flatten
 from keras.layers import Conv2D, MaxPooling2D
-from deep_nn import VGG16
+from deep_nn import VGG16,AntonioMax,AntonioAvg
 from sklearn.model_selection import train_test_split
 from keras.models import load_model
 
@@ -27,7 +27,9 @@ from keras.models import load_model
 class NeuralNetwork:
 	def __init__(self):
 		#self.model=VGG16(include_top=True, weights=None)
-		self.model=VGG16()
+		#self.model=VGG16()
+		self.model=AntonioMax()
+		#self.model=AntonioAvg()
 		return
 
 
@@ -111,24 +113,27 @@ if __name__ == "__main__":
     meanImage=sumImage/num
     print (meanImage)
     """
-    X_small = X[:30000]
-    y_small = Y[:30000]
+    #X_small = X[:82300]
+    #y_small2 = Y[:82300]
 
-    print("Before:")
-    print(X_small.shape)
-    X_small = np.expand_dims(X_small, axis=-1)
-    print("After")
-    print(X_small.shape)
+    X_small2 = np.load("X2.npy")
+    y_small2 = np.load("Y2.npy")
+    #np.save("Y2.npy",y_small2)
+
+    y_small = y_small2[0:30000]
+    X_small = X_small2[0:30000,:,:,:]
+    
     X_train5, X_test5, y_train5, y_test5 = train_test_split(X_small, y_small, test_size=0.33, random_state=42)
 
     print(X_train5.shape, X_test5.shape, y_train5.shape, y_test5.shape)
 
     network = NeuralNetwork()
 
-    print("Training")
-    network.train(X_train5, y_train5,300)
-    print("Done training")
+    #print("Training")
+    #network.train(X_train5, y_train5,100)
+    #print("Done training")
 
+    network.load('my_model_Antonio.h5')
     predicted = network.classify(X_test5)
     
 
@@ -143,7 +148,10 @@ if __name__ == "__main__":
     
     print("Difference")
     print(predicted - y_test)
-    
+    Difference=predicted - y_test
+
+    np.savetxt("foo.csv", Difference, delimiter=",")
 
     #SAVE MODEL
-    network.save('my_model.h5')
+    #network.save('my_model_Antonio.h5')
+    

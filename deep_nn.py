@@ -3,7 +3,7 @@ from keras.utils.data_utils import get_file
 from keras.optimizers import Adam
 from keras.models import Sequential
 from keras.layers import Dense, Flatten
-from keras.layers import Conv2D, MaxPooling2D
+from keras.layers import Conv2D, MaxPooling2D,AveragePooling2D
 from keras.layers import Input
 from keras import backend as K
 from keras.utils.conv_utils import convert_kernel
@@ -76,4 +76,50 @@ def VGG16():
     model.add(Dense(1, activation='linear', name='fc3'))
 
     model.compile(loss='mean_squared_error', optimizer=Adam())
+    return model
+
+def AntonioMax():
+    model = Sequential()
+    # 1
+    model.add(Conv2D(4, (3, 3), activation='relu', padding='same', name='block1_conv1',  input_shape = (128, 128, 1)))
+    model.add(Conv2D(4, (3, 3), activation='relu', padding='same', name='block1_conv2'))
+    model.add(MaxPooling2D((2, 2), strides=(2, 2), name='block1_pool'))
+    # 2
+    model.add(Conv2D(16, (3, 3), activation='relu', padding='same', name='block2_conv1'))
+    model.add(Conv2D(16, (3, 3), activation='relu', padding='same', name='block2_conv2'))
+    model.add(MaxPooling2D((2, 2), strides=(2, 2), name='block2_pool'))
+    # 3
+    model.add(Conv2D(32, (3, 3), activation='relu', padding='same', name='block3_conv1'))
+    model.add(Conv2D(32, (3, 3), activation='relu', padding='same', name='block3_conv2'))
+    model.add(MaxPooling2D((2, 2), strides=(2, 2), name='block3_pool'))
+    # FC Block
+    model.add(Flatten(name='flatten'))
+    model.add(Dense(512, activation='relu', name='fc1'))
+    model.add(Dense(512, activation='relu', name='fc2'))
+    model.add(Dense(1, activation='linear', name='fc3'))
+    model.compile(loss='mean_squared_error', optimizer=Adam())
+    
+    return model
+
+def AntonioAvg():
+    model = Sequential()
+    # 1
+    model.add(Conv2D(4, (3, 3), activation='relu', padding='same', name='block1_conv1',  input_shape = (128, 128, 1)))
+    model.add(Conv2D(4, (3, 3), activation='relu', padding='same', name='block1_conv2'))
+    model.add(AveragePooling2D((2, 2), strides=(2, 2), name='block1_pool'))
+    # 2
+    model.add(Conv2D(16, (3, 3), activation='relu', padding='same', name='block2_conv1'))
+    model.add(Conv2D(16, (3, 3), activation='relu', padding='same', name='block2_conv2'))
+    model.add(AveragePooling2D((2, 2), strides=(2, 2), name='block2_pool'))
+    # 3
+    model.add(Conv2D(32, (3, 3), activation='relu', padding='same', name='block3_conv1'))
+    model.add(Conv2D(32, (3, 3), activation='relu', padding='same', name='block3_conv2'))
+    model.add(AveragePooling2D((2, 2), strides=(2, 2), name='block3_pool'))
+    # FC Block
+    model.add(Flatten(name='flatten'))
+    model.add(Dense(512, activation='relu', name='fc1'))
+    model.add(Dense(512, activation='relu', name='fc2'))
+    model.add(Dense(1, activation='linear', name='fc3'))
+    model.compile(loss='mean_squared_error', optimizer=Adam())
+    
     return model
