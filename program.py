@@ -22,14 +22,15 @@ from keras.layers import Conv2D, MaxPooling2D
 from deep_nn import VGG16,AntonioMax,AntonioAvg
 from sklearn.model_selection import train_test_split
 from keras.models import load_model
+import pandas as pd
 
 
 class NeuralNetwork:
 	def __init__(self):
 		#self.model=VGG16(include_top=True, weights=None)
 		#self.model=VGG16()
-		self.model=AntonioMax()
-		#self.model=AntonioAvg()
+		#self.model=AntonioMax()
+		self.model=AntonioAvg()
 		return
 
 
@@ -120,8 +121,8 @@ if __name__ == "__main__":
     y_small2 = np.load("Y2.npy")
     #np.save("Y2.npy",y_small2)
 
-    y_small = y_small2[0:30000]
-    X_small = X_small2[0:30000,:,:,:]
+    y_small = y_small2[0:80000]
+    X_small = X_small2[0:80000,:,:,:]
     
     X_train5, X_test5, y_train5, y_test5 = train_test_split(X_small, y_small, test_size=0.33, random_state=42)
 
@@ -130,7 +131,7 @@ if __name__ == "__main__":
     network = NeuralNetwork()
 
     #print("Training")
-    #network.train(X_train5, y_train5,100)
+    #network.train(X_train5, y_train5,150)
     #print("Done training")
 
     network.load('my_model_Antonio.h5')
@@ -147,11 +148,14 @@ if __name__ == "__main__":
     y_test = np.reshape(y_test, (y_test5.shape[0], 1))
     
     print("Difference")
-    print(predicted - y_test)
-    Difference=predicted - y_test
+    print(np.abs(predicted - y_test))
+    Difference=np.abs(predicted - y_test)
+    print(predicted.shape,y_test.shape,Difference.shape)
 
-    np.savetxt("foo.csv", Difference, delimiter=",")
+    np.savetxt("foo.csv", np.hstack((y_test,predicted,Difference)), delimiter=",")
+    #df = pd.DataFrame({"True" : [y_test], "Predicted" : [predicted],"Difference" : [Difference]})
+    #df.to_csv("networkTest.csv", index=False)
 
     #SAVE MODEL
-    #network.save('my_model_Antonio.h5')
+    network.save('my_model_Antonio.h5')
     
